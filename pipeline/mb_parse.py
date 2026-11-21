@@ -161,7 +161,9 @@ def _listing(r):
     except ValueError:
         bhk = None
     return {"bhk": bhk, "price": _num(r.get("price")), "sqft": _num(r.get("caSqFt")), "psf": _num(r.get("sqFtPrice")),
-            "furnished": r.get("furnishedD"), "floor": r.get("floorNo"), "posted": (r.get("postDateT") or "")[:10]}
+            "furnished": r.get("furnishedD"), "floor": r.get("floorNo"), "posted": (r.get("postDateT") or "")[:10],
+            "url": "https://www.magicbricks.com/propertyDetails/" + r["url"] if r.get("url") else None,
+            "by": r.get("userType")}  # who posted it: Owner, Agent or Builder; contact details stay on Magicbricks
 
 
 RATING_KEYS = {"waterRt": "water", "electricityRt": "power", "backupRt": "power backup", "securityRt": "security",

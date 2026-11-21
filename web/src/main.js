@@ -1,6 +1,6 @@
 import './style.css';
 import maplibregl from 'maplibre-gl';
-import { addBaseLayers, addSocietyLayers, BASE_MODES, createMap, OVERVIEW, setBaseMode, setHighlights, setSelected, setStates, startPulse } from './map.js';
+import { addBaseLayers, addPlaceLayers, addSocietyLayers, BASE_MODES, createMap, OVERVIEW, setBaseMode, setFocus, setHighlights, setSelected, setStates, startPulse } from './map.js';
 import { searchSocieties } from './search.js';
 import { createFeed } from './feed.js';
 import { AMENITY_KEYS, DEFAULT_CRITERIA, NEAR, RANK, feetLabel, formatINR, matchSociety, matchUnit, priceFor, roomPasses } from './filters.js';
@@ -83,6 +83,7 @@ async function boot() {
   map.once('style.load', () => {
     addSocietyLayers(map, shapes, points);
     addBaseLayers(map);
+    addPlaceLayers(map, data.places);
     setBaseMode(map, baseMode);
     setHighlights(map, highlights);
     startPulse(map);
@@ -349,7 +350,9 @@ function openSociety(sid, { fly = true } = {}) {
   if (!s) return;
   if (map) setSelected(map, sid, selected);
   selected = sid;
-  if (fly && map) map.flyTo({ center: [s.lng, s.lat], zoom: mobile ? 15.4 : 16.2, pitch: is3d ? 55 : 0, bearing: 0, duration: 2600, essential: true,
+  if (map) setFocus(map, s);
+  const nearJain = (s.nearby?.jain?.m ?? Infinity) <= 1500;
+  if (fly && map) map.flyTo({ center: [s.lng, s.lat], zoom: nearJain ? (mobile ? 14.6 : 15.3) : mobile ? 15.4 : 16.2, pitch: is3d ? 55 : 0, bearing: 0, duration: 2600, essential: true,
     offset: mobile ? [0, -80] : [-180, 0] });
   document.body.classList.add('has-card');
   if (mobile) showMobile('society');
@@ -362,6 +365,7 @@ function closeCard() {
   document.body.classList.remove('has-card');
   if (mobile) showMobile('search');
   if (map && selected) setSelected(map, null, selected);
+  if (map) setFocus(map, null);
   selected = null;
   feed?.ambient();
 }
@@ -404,8 +408,18 @@ function renderCard(s) {
       ${parts.residents != null ? `<span>Residents <b>${parts.residents}</b></span>` : '<span class="fine">No resident ratings yet</span>'}<span>Nearby <b>${parts.nearby}</b></span><span>Amenities <b>${parts.amenities}</b></span>
       <span class="fine">Flat Finder score: residents' rating 50%, what is nearby 30%, amenities 20%</span></div></div>` : '';
   const near = s.nearby || {};
-  const nearRows = [['park', 'Park'], ['metro', 'Metro'], ['rail', 'Rail station'], ['jain', 'Shwetambar derasar'],['school', 'School'], ['hospital', 'Hospital'], ['shopping', 'Mall or supermarket']]
-    .filter(([k]) => near[k]).map(([k, l]) => `<div><span>${l}</span><b>${metres(near[k].m)}</b><small>${esc(near[k].name || '')}${near[k].n > 1 ? ` · ${near[k].n} within 1 km` : ''}</small></div>`).join('');
+  const walkTo = (n) => `https://www.google.com/maps/dir/?api=1&origin=${s.lat},${s.lng}&destination=${n.lat},${n.lng}&travelmode=walking`;
+  const nearRows = [['jain', 'Shwetambar derasar'], ['rail', 'Railway station'], ['metro', 'Metro station'], ['park', 'Park'], ['school', 'School'], ['hospital', 'Hospital'], ['shopping', 'Mall or supermarket']]
+    .filter(([k]) => near[k]).map(([k, l]) => `<div class="near-${k}"><span>${l}</span><b>${metres(near[k].m)}</b><small>${esc(near[k].name || '')}${near[k].n > 1 ? ` · ${near[k].n} within 1 km` : ''}${near[k].lat && ['jain', 'rail', 'metro'].includes(k) ? ` · <a href="${walkTo(near[k])}" target="_blank" rel="noopener">walking route</a>` : ''}</small></div>`).join('');
+  // live listings: each opens on Magicbricks, where the owner or agent can be contacted
+  const kind = crit.mode === 'rent' ? 'rent' : 'sale';
+  const live = (d?.listings?.[kind] || []).filter((x) => x.url && (!crit.bhk.length || crit.bhk.includes(x.bhk)));
+  const listRows = live.slice(0, 12).map((x) => `<tr><td>${x.bhk ? x.bhk + ' BHK' : '—'}<div class="fine">${x.sqft ? x.sqft + ' sq ft' : ''}${x.furnished ? ' · ' + esc(x.furnished) : ''}${x.floor ? ' · floor ' + esc(x.floor) : ''}</div></td>
+    <td><b>${kind === 'rent' ? formatINR(x.price) + '/mo' : formatINR(x.price)}</b><div class="fine">${x.by ? esc(x.by) + ' · ' : ''}posted ${esc(x.posted || '')}</div></td>
+    <td><a href="${esc(x.url)}" target="_blank" rel="noopener">View and contact →</a></td></tr>`).join('');
+  const listings = d?.listings ? `<h4>${kind === 'rent' ? 'For rent now' : 'For sale now'} (${live.length})</h4>${listRows
+    ? `<table class="listings">${listRows}</table><div class="fine">Opens the listing on Magicbricks, where you can call or message the ${kind === 'rent' ? 'owner or agent' : 'seller'}.${live.length > 12 ? ` Showing 12 of ${live.length}.` : ''}</div>`
+    : `<div class="fine">No ${kind === 'rent' ? 'rental' : 'sale'} listings${crit.bhk.length ? ' for the BHK you picked' : ''} on Magicbricks right now. <a href="${esc(s.url)}" target="_blank" rel="noopener">Check the project page</a>.</div>`}` : '';
   const ratingBars = d && Object.keys(d.ratings || {}).length ? `<div class="bars">${Object.entries(d.ratings).map(([k, v]) => `<div><span>${esc(k)}</span><i style="--w:${(v / 5) * 100}%"></i><b>${v}</b></div>`).join('')}</div>` : '';
   const reviews = d?.reviews?.length ? `<div class="reviews">${d.reviews.slice(0, 3).map((r) => `<blockquote>${esc(r.text)}<cite>${esc(r.by || 'Resident')}${r.date ? ' · ' + esc(r.date) : ''}</cite></blockquote>`).join('')}</div>` : '';
   const trend = d?.trend?.length > 1 ? sparkline(d.trend) : '';
@@ -426,10 +440,11 @@ function renderCard(s) {
     ${s.note ? `<div class="fine">${esc(s.note)}</div>` : ''}
     <h4>Buy and rent</h4>
     ${priceRows ? `<table class="prices"><tr><th>Home</th><th>Buy</th><th>Rent</th></tr>${priceRows}</table>` : '<div class="fine">No price data.</div>'}
+    ${nearRows ? `<h4>Getting around</h4><div class="near">${nearRows}</div><div class="fine">Straight-line distance; the walking route link shows the real walk.</div>` : ''}
+    ${listings}
     ${trend}
     <h4>Bedrooms</h4>
     ${unitRows ? `<table><tr><th>Unit</th><th>Bedrooms</th><th></th><th>Source</th></tr>${unitRows}</table>` : '<div class="fine">No unit types listed.</div>'}
-    ${nearRows ? `<h4>Nearby</h4><div class="near">${nearRows}</div>` : ''}
     ${ratingBars ? `<h4>What residents rate</h4>${ratingBars}` : ''}${reviews}
     ${facts || amen ? `<h4>Amenities (${s.amenities.length})</h4><div class="amen">${facts}${amen}</div>` : ''}
     ${about}

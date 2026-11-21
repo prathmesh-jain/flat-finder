@@ -191,3 +191,43 @@ export function setHighlights(map, { glow = true, bounds = true, labels = true }
   map.setLayoutProperty('site-line', 'visibility', bounds ? 'visible' : 'none');
   map.setLayoutProperty('labels', 'visibility', labels ? 'visible' : 'none');
 }
+
+// ---------- Places people walk to: derasars and stations, always on the map ----------
+const PLACE_COLORS = { jain: '#ff9f43', rail: '#7fb2ff', metro: '#b48cff' };
+
+export function addPlaceLayers(map, places) {
+  if (!places?.length) return;
+  map.addSource('places', { type: 'geojson', data: { type: 'FeatureCollection', features: places.map((p) => ({
+    type: 'Feature', properties: { k: p.k, name: p.name || '' }, geometry: { type: 'Point', coordinates: [p.lng, p.lat] } })) } });
+  map.addSource('focus', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+  const color = ['match', ['get', 'k'], 'jain', PLACE_COLORS.jain, 'rail', PLACE_COLORS.rail, PLACE_COLORS.metro];
+  map.addLayer({ id: 'focus-line', type: 'line', source: 'focus', filter: ['==', ['geometry-type'], 'LineString'],
+    layout: { 'line-cap': 'round' }, paint: { 'line-color': color, 'line-width': 2.5, 'line-dasharray': [1, 2], 'line-opacity': 0.95 } });
+  map.addLayer({ id: 'focus-label', type: 'symbol', source: 'focus', filter: ['==', ['geometry-type'], 'LineString'],
+    layout: { 'symbol-placement': 'line-center', 'text-field': ['get', 'label'], 'text-font': ['Noto Sans Regular'], 'text-size': 12, 'text-allow-overlap': true },
+    paint: { 'text-color': color, 'text-halo-color': 'rgba(0,0,0,.9)', 'text-halo-width': 1.6 } });
+  map.addLayer({ id: 'place-dot', type: 'circle', source: 'places', minzoom: 10,
+    filter: ['any', ['==', ['get', 'k'], 'jain'], ['>=', ['zoom'], 12]],
+    paint: { 'circle-color': color, 'circle-stroke-color': '#000', 'circle-stroke-width': 1.5,
+      'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, ['match', ['get', 'k'], 'jain', 4, 2.5], 16, ['match', ['get', 'k'], 'jain', 9, 6]] } });
+  map.addLayer({ id: 'place-label', type: 'symbol', source: 'places', minzoom: 12.5,
+    filter: ['any', ['==', ['get', 'k'], 'jain'], ['>=', ['zoom'], 13.5]],
+    layout: { 'text-field': ['get', 'name'],
+      'text-font': ['Noto Sans Regular'], 'text-size': ['match', ['get', 'k'], 'jain', 12.5, 11], 'text-offset': [0, 1.3], 'text-anchor': 'top',
+      'text-max-width': 12, 'text-optional': true },
+    paint: { 'text-color': color, 'text-halo-color': 'rgba(0,0,0,.9)', 'text-halo-width': 1.5 } });
+}
+
+// Dashed lines from the open society to its nearest derasar, railway station and metro station, with walking distance.
+export function setFocus(map, s) {
+  const src = map.getSource('focus');
+  if (!src) return;
+  const feats = [];
+  for (const k of ['jain', 'rail', 'metro']) {
+    const n = s?.nearby?.[k];
+    if (!n?.lat || n.m > 3000) continue;
+    feats.push({ type: 'Feature', properties: { k, label: n.m >= 1000 ? `${(n.m / 1000).toFixed(1)} km` : `${n.m} m` },
+      geometry: { type: 'LineString', coordinates: [[s.lng, s.lat], [n.lng, n.lat]] } });
+  }
+  src.setData({ type: 'FeatureCollection', features: feats });
+}

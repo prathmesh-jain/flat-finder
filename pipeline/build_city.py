@@ -255,7 +255,10 @@ def main(city="gurgaon"):
              "sale_count": p.get("sale_count"), "rent_count": p.get("rent_count"), "psf_now": p.get("psf_now"),
              "trend": p.get("trend") or [], "description": p.get("description"),
              "gmaps": "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote(f"{p['name']}, {p.get('locality') or ''}, {cfg['name']}"),
-             "prices": pricing.listing_stats(p)}
+             "prices": pricing.listing_stats(p),
+             "listings": {kind: [{k: x.get(k) for k in ("bhk", "price", "sqft", "furnished", "floor", "posted", "url", "by")}
+                                 for x in sorted(p.get(key) or [], key=lambda x: x.get("price") or 0)]
+                          for kind, key in (("rent", "rent_listings"), ("sale", "sale_listings"))}}
         if s["towers"] and s["towers"] > 60:  # portal typo (e.g. 1500 towers): not plausible, drop it
             s["towers"] = None
         p["_s"] = s
@@ -387,7 +390,7 @@ def main(city="gurgaon"):
                 continue
             k = q["k"]
             if k not in near or d < near[k]["m"]:
-                near[k] = {"m": round(d, -1), "name": q["name"], "n": near.get(k, {}).get("n", 0)}
+                near[k] = {"m": round(d, -1), "name": q["name"], "n": near.get(k, {}).get("n", 0), "lat": q["lat"], "lng": q["lng"]}
             if d <= 1000:
                 near[k]["n"] = near[k].get("n", 0) + 1
         s["nearby"] = near
@@ -448,10 +451,11 @@ def main(city="gurgaon"):
                        "for_sale": sum(s["sale_count"] or 0 for s in societies), "for_rent": sum(s["rent_count"] or 0 for s in societies),
                        "verified": sum(s["verified"] for s in societies)},
             "sources": ["Magicbricks project pages", "OpenStreetMap contributors"] + (["HRERA Gurugram"] if city == "gurgaon" else []) + ["Builder brochures (verified rows)"] + (["Jain sangh listings (derasars)"] if (vdir / f"{city}-derasars.json").exists() else []),
+            "places": [{"k": q["k"], "name": q["name"], "lat": q["lat"], "lng": q["lng"]} for q in pois if q["k"] in ("jain", "rail", "metro")],
             "societies": societies, "events": events}
     details = {}
     for s in societies:  # heavy per-society text, loaded only when a card opens
-        details[s["id"]] = {k: s.pop(k) for k in ("reviews", "description", "trend", "ratings", "images")}
+        details[s["id"]] = {k: s.pop(k) for k in ("reviews", "description", "trend", "ratings", "images", "listings")}
     (WEB / f"{city}.json").write_text(json.dumps(doc, separators=(",", ":")))
     (WEB / f"{city}-details.json").write_text(json.dumps(details, separators=(",", ":")))
     for s in societies:

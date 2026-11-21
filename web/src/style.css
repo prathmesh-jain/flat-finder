@@ -303,3 +303,11 @@ body.has-card .maplibregl-ctrl-bottom-right { right: calc(var(--right-w) + var(-
 
 .prices .flagged { color: var(--muted); text-decoration: line-through dotted; }
 .flag-note { color: var(--likely); }
+
+/* Getting around: derasar, railway and metro span the full width, wrap, and match their map colours */
+.near .near-jain, .near .near-rail, .near .near-metro { grid-column: 1 / -1; border-left: 3px solid var(--place, #888); }
+.near .near-jain { --place: #ff9f43; } .near .near-rail { --place: #7fb2ff; } .near .near-metro { --place: #b48cff; }
+.near .near-jain small, .near .near-rail small, .near .near-metro small { white-space: normal; }
+.near small a { color: inherit; text-decoration: underline; }
+table.listings td { vertical-align: top; }
+table.listings td:last-child { white-space: nowrap; text-align: right; }
