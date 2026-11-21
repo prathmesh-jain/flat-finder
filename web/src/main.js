@@ -24,6 +24,8 @@ const KINDS = [
 const AMEN_LABELS = { squash: 'Squash', pool: 'Pool', gym: 'Gym', club: 'Clubhouse', tennis: 'Tennis', badminton: 'Badminton', jogging: 'Jogging track', kids: 'Kids play' };
 const DIVY = { // Divy's own Gurugram search, shown as the example
   ...structuredClone(DEFAULT_CRITERIA), kinds: ['apartment'], bhk: [2, 3, 4], roomArea: 138, minSqft: 1620, amenities: ['squash'] }; // 11'3" x 12'3" = 138 sq ft
+const DERASAR = { // Mumbai example: renting 1-2 BHK up to Rs 45k with a Shwetambar derasar within walking distance
+  ...structuredClone(DEFAULT_CRITERIA), mode: 'rent', bhk: [1, 2], maxRent: 45000, near: ['jain'] };
 const STATE_LABEL = { match: 'Matches your search', likely: 'Likely match', probable: 'Probably fits (estimated)', unknown: 'Not checked yet', no: 'Does not match' };
 
 let crit = structuredClone(DEFAULT_CRITERIA);
@@ -98,6 +100,7 @@ async function boot() {
 function intro() {
   closeCard();
   if (params.get('preset') === 'divy') useCriteria(DIVY);
+  if (params.get('preset') === 'derasar') useCriteria(DERASAR);
   if (params.get('open')) {
     map.jumpTo(OVERVIEW);
     applyFilters();
