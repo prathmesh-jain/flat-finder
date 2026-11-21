@@ -372,6 +372,10 @@ def main(city="gurgaon"):
     # nearby places from OpenStreetMap
     pois_file = out / "osm_pois.json"
     pois = json.loads(pois_file.read_text()) if pois_file.exists() else []
+    # hand-checked places of worship, kind "jain" (Shwetambar Murtipujak derasars, each with its source)
+    der_file = vdir / f"{city}-derasars.json"
+    if der_file.exists():
+        pois += [{"k": "jain", "name": d["name"], "lng": d["lng"], "lat": d["lat"]} for d in json.loads(der_file.read_text())["derasars"]]
     poi_grid = Grid(pois, lambda q: (q["lng"], q["lat"]))
     for s in societies:
         here = (s["lng"], s["lat"])

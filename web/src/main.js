@@ -195,7 +195,7 @@ function buildFilters() {
       ...Object.keys(AMENITY_KEYS).map((k) => chip(AMEN_LABELS[k], crit.amenities.includes(k), () => { toggle(crit.amenities, k); redrawFilters(); applyFilters(); })),
       ...custom.map((k) => chip(`${esc(allAmenities.find((a) => a.name.toLowerCase() === k.slice(2))?.name || k.slice(2))} ×`, true, () => { toggle(crit.amenities, k); redrawFilters(); applyFilters(); })),
       chip($('amen-more').hidden ? `More (${allAmenities.length})` : 'Fewer', false, () => { $('amen-more').hidden = !$('amen-more').hidden; redrawFilters(); if (!$('amen-more').hidden) { amenList(); $('amen-q').focus(); } }, 'chip more-chip'));
-    $('f-near').replaceChildren(...Object.entries(NEAR).map(([k, n]) => chip(`${n.label} <small>${n.m >= 1000 ? n.m / 1000 + ' km' : n.m + ' m'}</small>`, crit.near.includes(k), () => { toggle(crit.near, k); redrawFilters(); applyFilters(); })));
+    $('f-near').replaceChildren(...Object.entries(NEAR).filter(([, n]) => n.kinds.some((k) => data.societies.some((s) => s.nearby?.[k]))).map(([k, n]) => chip(`${n.label} <small>${n.m >= 1000 ? n.m / 1000 + ' km' : n.m + ' m'}</small>`, crit.near.includes(k), () => { toggle(crit.near, k); redrawFilters(); applyFilters(); })));
     document.querySelectorAll('#f-mode button').forEach((b) => b.classList.toggle('on', b.dataset.m === crit.mode));
     document.querySelectorAll('#f-room-mode button').forEach((b) => b.classList.toggle('on', b.dataset.r === roomMode));
     document.querySelectorAll('#f-area-unit button').forEach((b) => b.classList.toggle('on', b.dataset.u === areaUnit));
@@ -401,7 +401,7 @@ function renderCard(s) {
       ${parts.residents != null ? `<span>Residents <b>${parts.residents}</b></span>` : '<span class="fine">No resident ratings yet</span>'}<span>Nearby <b>${parts.nearby}</b></span><span>Amenities <b>${parts.amenities}</b></span>
       <span class="fine">Flat Finder score: residents' rating 50%, what is nearby 30%, amenities 20%</span></div></div>` : '';
   const near = s.nearby || {};
-  const nearRows = [['park', 'Park'], ['metro', 'Metro'], ['rail', 'Rail station'], ['school', 'School'], ['hospital', 'Hospital'], ['shopping', 'Mall or supermarket']]
+  const nearRows = [['park', 'Park'], ['metro', 'Metro'], ['rail', 'Rail station'], ['jain', 'Shwetambar derasar'],['school', 'School'], ['hospital', 'Hospital'], ['shopping', 'Mall or supermarket']]
     .filter(([k]) => near[k]).map(([k, l]) => `<div><span>${l}</span><b>${metres(near[k].m)}</b><small>${esc(near[k].name || '')}${near[k].n > 1 ? ` · ${near[k].n} within 1 km` : ''}</small></div>`).join('');
   const ratingBars = d && Object.keys(d.ratings || {}).length ? `<div class="bars">${Object.entries(d.ratings).map(([k, v]) => `<div><span>${esc(k)}</span><i style="--w:${(v / 5) * 100}%"></i><b>${v}</b></div>`).join('')}</div>` : '';
   const reviews = d?.reviews?.length ? `<div class="reviews">${d.reviews.slice(0, 3).map((r) => `<blockquote>${esc(r.text)}<cite>${esc(r.by || 'Resident')}${r.date ? ' · ' + esc(r.date) : ''}</cite></blockquote>`).join('')}</div>` : '';

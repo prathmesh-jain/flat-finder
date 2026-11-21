@@ -2,6 +2,8 @@
 
 usage: python mb_crawl.py list <city>      # all list pages -> out/<city>/mb_index.json
        python mb_crawl.py projects <city>  # every project page -> out/<city>/mb_projects.json
+       python mb_crawl.py projects <city> --localities "Kandivali West|Borivali West"
+                                           # only projects whose locality matches the regex (case-insensitive)
 <city> is a key in data/cities.json (default gurgaon).
 """
 import gzip
@@ -11,6 +13,8 @@ import pathlib
 import sys
 import time
 import urllib.request
+
+import re
 
 import mb_parse
 
@@ -63,6 +67,10 @@ def crawl_list():
 
 def crawl_projects():
     index = json.loads((OUT / "mb_index.json").read_text())
+    if "--localities" in sys.argv:
+        pat = re.compile(sys.argv[sys.argv.index("--localities") + 1], re.I)
+        index = [p for p in index if pat.search(p.get("locality") or "")]
+        print("projects in chosen localities:", len(index), flush=True)
     from concurrent.futures import ThreadPoolExecutor
 
     def one(p):

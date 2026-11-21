@@ -38,6 +38,8 @@ export const AMENITY_KEYS = {
 export const NEAR = {
   park: { label: 'Park', kinds: ['park'], m: 500 },
   metro: { label: 'Metro or rail', kinds: ['metro', 'rail'], m: 1500 },
+  rail: { label: 'Railway station', kinds: ['rail'], m: 1500 },
+  jain: { label: 'Shwetambar derasar', kinds: ['jain'], m: 700 },
   school: { label: 'School', kinds: ['school'], m: 1000 },
   hospital: { label: 'Hospital', kinds: ['hospital'], m: 2000 },
   shopping: { label: 'Mall or supermarket', kinds: ['shopping'], m: 1500 },

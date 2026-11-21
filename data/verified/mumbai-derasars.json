@@ -1,0 +1,131 @@
+{
+ "about": "Public Shwetambar Murtipujak derasars (temples with a moolnayak idol; Sthanakwasi and Terapanthi sanghs keep none). Digambar mandirs, Sthanaks and gruh jinalays (home shrines) are left out. position: 'osm' = OpenStreetMap node of the temple; 'street' = placed from the street or complex in the address, about 300 m.",
+ "derasars": [
+  {
+   "name": "Shri Sambhavnath Dada derasar, Jambli Galli (Borivali Jain Shw. Mu. Sangh)",
+   "area": "Borivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.22603,
+   "lng": 72.85423,
+   "position": "osm",
+   "source": "https://jainsite.com/temple/shree-borivali-jain-shw-mu-jain-sangh/"
+  },
+  {
+   "name": "Shri Chintamani Parshwanath derasar, Sumer Nagar, S.V. Road",
+   "area": "Borivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.22029,
+   "lng": 72.8536,
+   "position": "street",
+   "source": "https://jainsite.com/temple/shree-chintamani-parshwanath-sumernagar-jain-trust/"
+  },
+  {
+   "name": "Tapagach Udaykalyan Shw. Mu. Pu. derasar, Chandavarkar Lane",
+   "area": "Borivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.2305,
+   "lng": 72.8485,
+   "position": "street",
+   "source": "https://jainsite.com/temple/shree-tapagach-udaykalyan-jain-shw-mu-pu-trust/"
+  },
+  {
+   "name": "Yoginagar Jain derasar",
+   "area": "Borivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.2365,
+   "lng": 72.843,
+   "position": "street",
+   "source": "https://jainsite.com/temple/yoginagar-jain-derasar/"
+  },
+  {
+   "name": "Geetanjali Jain derasar, Saibaba Road",
+   "area": "Borivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.2169,
+   "lng": 72.84784,
+   "position": "street",
+   "source": "https://jainsite.com/temple/geetanjali-jain-derasar/"
+  },
+  {
+   "name": "Mahavir Nagar Shw. Mu. Pu. Sangh derasar (Vasupujya Swami)",
+   "area": "Kandivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.214,
+   "lng": 72.8395,
+   "position": "street",
+   "source": "https://jainsite.com/temple/shree-mahavir-nagar-shw-mu-pu-jain-sangh/"
+  },
+  {
+   "name": "Tapagach Udaykalyan derasar, Kamla Vihar, Mahavir Nagar",
+   "area": "Kandivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.212,
+   "lng": 72.8435,
+   "position": "street",
+   "source": "https://jainsite.com/temple/shree-shwetamber-mu-pu-tapagach-udaykalyan-jain-sangh/"
+  },
+  {
+   "name": "Iraniwadi Jain derasar (Aradhana Bhavan)",
+   "area": "Kandivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.2015,
+   "lng": 72.8418,
+   "position": "street",
+   "source": "https://jainsite.com/temple/iraniwadi-jain-derasar/"
+  },
+  {
+   "name": "Kandivali Achalgach Jain Sangh derasar, M.G. Road (near SVP pool)",
+   "area": "Kandivali West",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 19.20456,
+   "lng": 72.84507,
+   "position": "street",
+   "source": "https://jainsite.com/temple/shree-kandivali-achalgach-jain-sangh/"
+  },
+  {
+   "name": "Motisha Lalbaug derasar, Panjrapole, C.P. Tank",
+   "area": "South Mumbai",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 18.95452,
+   "lng": 72.82657,
+   "position": "osm",
+   "source": "https://jainmandir.org/Temple/Shri-Mahaveer-Swami-Shwetamber-Jain-Derasar,-(Motisha-Lalbaug-Jain-Temple),-C-P-Tank-Road,-Bhuleshwar,-Mumbai-(Maharashtra)"
+  },
+  {
+   "name": "Shri Godiji Parshwanath, Pydhonie",
+   "area": "South Mumbai",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 18.95379,
+   "lng": 72.83121,
+   "position": "osm",
+   "source": "https://jainsite.com/?p=13320"
+  },
+  {
+   "name": "Gowalia Tank Jain Sangh (Shankheshwar Parshwanath), August Kranti Marg",
+   "area": "South Mumbai",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 18.9635,
+   "lng": 72.8095,
+   "position": "street",
+   "source": "https://jainsite.com/temple/shree-gowalia-tank-jain-sangh/"
+  },
+  {
+   "name": "Marine Drive Jain derasar, 77 Marine Drive (Patan Jain Mandal Marg)",
+   "area": "South Mumbai",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 18.944,
+   "lng": 72.8225,
+   "position": "street",
+   "source": "https://www.jainmandir.org/Temple/Shri-Shwetamber-Jain-Mandir,-Marine-Lines-Flyover,-Churchgate,-Mumbai-(Maharashtra)"
+  },
+  {
+   "name": "Babu Amichand Panalal Adishwar temple, Walkeshwar",
+   "area": "South Mumbai",
+   "sect": "Shwetambar Murtipujak",
+   "lat": 18.94912,
+   "lng": 72.79879,
+   "position": "osm",
+   "source": "https://www.iuemag.com/j25/ta/top-5-jain-temples-in-mumbai-you-cannot-miss"
+  }
+ ]
+}
