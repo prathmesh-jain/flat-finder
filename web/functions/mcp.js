@@ -4,7 +4,7 @@ import { DEFAULT_CRITERIA, NEAR, feetLabel, formatINR, hasAmenity, matchSociety,
 import { searchSocieties } from '../src/search.js';
 
 const PROTOCOL = '2025-06-18';
-const SITE = 'https://flat-finder.pages.dev';
+const SITE = 'https://flatsearch.prathmeshjain.in';
 const cache = new Map();
 
 async function city(env, origin, id) {
@@ -17,7 +17,7 @@ async function city(env, origin, id) {
 }
 
 const KINDS = ['apartment', 'builder floor', 'villa', 'plot', 'commercial', 'other'];
-const PLACES = ['park', 'metro', 'rail', 'school', 'hospital', 'shopping'];
+const PLACES = ['park', 'metro', 'rail', 'school', 'hospital', 'shopping', 'jain'];
 const FILTERS = {
   city: { type: 'string', description: 'City id, e.g. "gurgaon"', default: 'gurgaon' },
   mode: { type: 'string', enum: ['buy', 'rent'], default: 'buy', description: 'Which price the budget and price sorting use' },
